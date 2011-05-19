@@ -69,8 +69,7 @@ body {
   background-color: #FFF;
   padding: 20px; }
 
-#fig {
+#holder {
   position: relative;
-  margin: auto;
-  width: 430px;
-  height: 225px; }
+  width: 830px;
+  height: 525px; }
