@@ -40,5 +40,6 @@ module Walle
     config.filter_parameters += [:password]
     
     config.action_view.javascript_expansions[:defaults] = %w(jquery-1.4.2.min rails)
+    config.action_view.javascript_expansions[:graphael] = %w(raphael-min g.raphael-min g.bar-min g.dot-min g.line-min g.pie-min)
   end
 end
