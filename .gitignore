@@ -1,7 +1,6 @@
 .bundle
 db/*.sqlite3
 config/database.yml
-config/tandem_options.yml
 log/development.log
 log/production.log
 log/*.log
