@@ -1,0 +1,43 @@
+=javascript_include_tag "automata.js"
+%script
+    = "histogram=#{@histogram.to_json};"
+    = "histogram2=#{@histogram2.to_json};"
+
+%pre= simulator_stats(@simulator)
+
+/%table
+/    %tr
+/        %td 
+/        %td 
+/    %tr
+/        %td 
+/        %td 
+/    %tr
+/        %td card_id
+/        %td ret
+/    -# @simulator.history.keys.sort.each do |card_id|
+/        -#%tr
+/            -#%td= card_id
+/            -#%td= @simulator.history.card_retention_in(card_id,0.days)
+.week_report_wrapper
+    #graph.week_report
+
+
+%br
+%hr
+%br
+
+
+%pre= simulator_stats(@simulator2)
+
+.week_report_wrapper
+    #graph2.week_report
+
+            
+%hr
+%h2 simulator
+%pre
+    = debug @simulator
+
+
+    

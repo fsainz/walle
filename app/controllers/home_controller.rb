@@ -1,7 +1,29 @@
 include Math
+
 class HomeController < ApplicationController
+  
+  def automata
+    @simulator = Simulator.new
+    @simulator.simulate(10)
+    @histogram = [] 
+    @simulator.history.to_histogram.each do |e|
+      @histogram << e << [0,0,0,0,0,0,0]
+    end
+    @histogram.flatten!
+    
+    
+    @simulator2 = Simulator.new(:walle_one)
+    @simulator2.simulate(10)
+    @histogram2 = [] 
+    @simulator2.history.to_histogram.each do |e|
+      @histogram2 << e << [0,0,0,0,0,0,0]
+    end
+    @histogram2.flatten!
+  end
+  
+  
   def index
-    period_matrix = period_vectors(3.week, 10.day)
+    period_matrix = period_vectors(3.week, 8.day)
 
     card = Card.new(:strength=>0.5)
     card2 = Card.new(:strength=>1.0)

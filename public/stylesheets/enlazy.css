@@ -73,3 +73,11 @@ body {
   position: relative;
   width: 830px;
   height: 525px; }
+
+.week_report_wrapper {
+  overflow-x: scroll; }
+
+.week_report {
+  position: relative;
+  width: 12900px;
+  height: 325px; }

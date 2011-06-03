@@ -1,29 +1,21 @@
 $(document).ready(function(){
-    var r = Raphael("holder");
-    r.g.txtattr.font = "12px 'Fontin Sans', Fontin-Sans, sans-serif";
-                
-    var x = [], y = [], y2 = [], y3 = [];
-    for (var i = 0; i < 1e3; i++) {
-        x[i] = i * 10;
-        y[i] = (y[i - 1] || 0) + (Math.random() * 7) - 3;
-        y2[i] = (y2[i - 1] || 150) + (Math.random() * 7) - 3.5;
-        y3[i] = (y3[i - 1] || 300) + (Math.random() * 7) - 4;
+    if (window.data !== undefined) {
+        var r = Raphael("holder");
+        r.g.txtattr.font = "12px 'Fontin Sans', Fontin-Sans, sans-serif";
+        r.g.text(160, 10, "Simple Line Chart (1000 points)");
+        r.g.linechart(20, 20, 800, 280, data[0], data[1],{
+            axis: "0 0 1 1",
+            "colors": ["#444","#444","#444","#444"]
+        });
+        r.g.linechart(20, 20, 800, 280, data2[0], data2[1],{
+            "colors": ["#07F","#07F","#07F","#07F"]
+        });
     }
- 
- 
-    r.g.text(160, 10, "Simple Line Chart (1000 points)");
-    r.g.linechart(20, 20, 800, 280, data[0], data[1],{
-        axis: "0 0 1 1",
-        "colors": ["#444","#444","#444","#444"]
-    });
-    r.g.linechart(20, 20, 800, 280, data2[0], data2[1],{
-        "colors": ["#07F","#07F","#07F","#07F"]
-    });
     
-    
-    //    var r = Raphael(10, 50, 640, 480);
-    // Creates pie chart at with center at 320, 200,
-    // radius 100 and data: [55, 20, 13, 32, 5, 1, 2]
+
+//    var r = Raphael(10, 50, 640, 480);
+// Creates pie chart at with center at 320, 200,
+// radius 100 and data: [55, 20, 13, 32, 5, 1, 2]
 //    r.g.piechart(620, 120, 100, [55, 20, 13, 32, 5, 1, 2]);
     
     
