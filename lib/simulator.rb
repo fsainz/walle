@@ -10,11 +10,11 @@ class Simulator
   
   def create_cards(number=20)
     number.times{Card.create} if Card.count < number
-
+    initial_strengths = [1] * 10 + [7] * 10
     @cards = Card.limit(number).all
-    @cards.each do |card| 
+    @cards.each_with_index do |card, i| 
       @engine.add_card(card)
-      @history.initialize_card(card)
+      @history.initialize_card(card, initial_strengths[i])
     end
   end
   
@@ -45,6 +45,9 @@ class Simulator
   def choose_engine(name)
     case name
     when :walle_one then WalleEngine::WalleOne.new(@history)
+    when :walle_one_random then WalleEngine::WalleOneRandom.new(@history)
+    when :walle_one_coma5 then WalleEngine::WalleOneComa5.new(@history)
+    when :walle_two then WalleEngine::WalleTwo.new(@history)
     else WalleEngine::WalleRandom.new(@history)
     end
   end

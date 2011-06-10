@@ -1,26 +1,24 @@
 =javascript_include_tag "automata.js"
 %script
     = "histogram=#{@histogram.to_json};"
+    = "ret_histogram=#{@ret_histogram.to_json};"
     = "histogram2=#{@histogram2.to_json};"
+    = "ret_histogram2=#{@ret_histogram2.to_json};"
+    = "x1=#{@x1.to_json};"
+    = "y1=#{@y1.to_json};"
+    = "x2=#{@x2.to_json};"
+    = "y2=#{@y2.to_json};"
+    = "x3=#{@x3.to_json};"
+    = "y3=#{@y3.to_json};"
+    = "x4=#{@x4.to_json};"
+    = "y4=#{@y4.to_json};"
+    = "x5=#{@x5.to_json};"
+    = "x6=#{@x6.to_json};"
 
 %pre= simulator_stats(@simulator)
-
-/%table
-/    %tr
-/        %td 
-/        %td 
-/    %tr
-/        %td 
-/        %td 
-/    %tr
-/        %td card_id
-/        %td ret
-/    -# @simulator.history.keys.sort.each do |card_id|
-/        -#%tr
-/            -#%td= card_id
-/            -#%td= @simulator.history.card_retention_in(card_id,0.days)
 .week_report_wrapper
-    #graph.week_report
+    #graph1.week_report
+    #graph1_2.week_report.invert
 
 
 %br
@@ -32,12 +30,10 @@
 
 .week_report_wrapper
     #graph2.week_report
+    #graph2_2.week_report.invert
 
-            
-%hr
-%h2 simulator
-%pre
-    = debug @simulator
-
-
-    
+#retentions
+#healthy_cards
+#retention_status_for_random
+#retention_status_for_walle
+  
