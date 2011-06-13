@@ -7,22 +7,22 @@ class History < SimpleDelegator
     @last_update = nil
     @healthy_cards_record = []
     @retention_status = []
-    @retentions_before_review = [(1..20).to_a.map{|card_id| [card_id, 100]}]
+#    @retentions_before_review = [(1..2).to_a.map{|card_id| [card_id, 100]}]
     super(@data)
   end
   
-  def initialize_card(card, strength = nil)
+  def initialize_card(card, strength = nil, date = nil)
     return if @data[card.id]
     @history_by_date = nil
-    @last_update = Time.now
+    @last_update ||= date
     s = strength || rand(2)+7
-    @data[card.id] = [Event.new(@last_update, -1.0, s)]
+    @data[card.id] = [Event.new(date||Time.now, -1.0, s)]
   end
   
   def update_card(card_id, date, quality, strength)
     @history_by_date = nil
     @last_update = date
-    @data[card_id] << Event.new(date, quality, strength)
+    @data[card_id] << Event.new(date, quality, strength.to_f)
   end
   
   def card_strength(card_id)
@@ -65,16 +65,16 @@ class History < SimpleDelegator
   end
   
   def update_retentions_before_review(date_of_review)
+    @retentions_before_review ||= [(1..@data.keys.length-1).to_a.map{|card_id| [card_id, 100]}]
     r = @data.keys.inject([]) do |rets, card_id|
       time_lapse = (date_of_review - card_last_update(card_id)) / (60*60*24)
       strength = card_strength(card_id)
       rets << [card_id, retention(time_lapse, strength)]
       rets
     end
-#    debugger
     @retentions_before_review << r
 
-  #  retention((date_of_review - card_last_update(card_id)) / (60*60*24), card_strength(card_id))
+    #  retention((date_of_review - card_last_update(card_id)) / (60*60*24), card_strength(card_id))
   end
   
   def plot_retentions_before_review
@@ -121,9 +121,27 @@ class History < SimpleDelegator
     end
   end
   
+  def dates_of_review
+    self.by_date.keys.join(" "*30)
+  end
+  
   def card_retention_in_range?(card_id, days, range)
     ret = card_retention_in(card_id, days)
     range.first <= ret && range.last >= ret
+  end
+  
+  def card_time_to_reach_retention(card_id, ret)
+    -card_strength(card_id) * log(ret)
+  end
+  
+  def card_optimal_date_of_review(card_id)
+    card_last_update(card_id) + card_time_to_reach_retention(card_id, 0.5).days
+  end
+  
+  def reviewed_cards
+    @data.reject do |card_id, historic|
+      !historic.any?{|event| event.quality > 0}
+    end.keys.sort
   end
   
   
@@ -134,8 +152,12 @@ class History < SimpleDelegator
     avg/@data.keys.length.to_f
   end
   
-  def card_retention_in(card, time=0.day)
-    time = @last_update + time
+  def card_retention_in(card, time=0.day, date_of_review=nil)
+    if date_of_review
+      time = date_of_review + time
+    else  
+      time = @last_update + time
+    end
     strength = @data[card].last.strength
     date = card_last_update(card)
     lapse_time = (time-date)/(60*60*24).to_f
@@ -177,7 +199,23 @@ class History < SimpleDelegator
         unless @history_by_date[event.date_to_s]
           @history_by_date[event.date_to_s] = [[card_id, event.strength]]
         else
-          @history_by_date[event.date_to_s] << [card_id, event.strength]
+          #ESTO ES UN HORROR: cuando en se añade una tarjeta un día cualquiera de repaso
+          # se introduce en el historial con q=-1.0 y ese mismo día se va a repasar (o puede
+          # que no se repase, pero se metera un evento en su historial de ese día tambien con 
+          # q=-1.0.
+          # El caso es que a la hora de pensar en presentar esto en forma de histograma hay que
+          # eliminar repeticiones y quedarse con la que tenga la S más grande
+          cards = @history_by_date[event.date_to_s]
+          
+          if cards.any?{|e| e[0] == card_id}
+            the_same_card = cards.select{|cs| cs[0] == card_id}
+            the_same_card.each{|e| cards.delete(e)} #si hubiera varias coincidencias las borramos todas
+            the_same_card << [card_id, event.strength]
+            selected_card = the_same_card.sort_by{|e| e[1]}.last #nos quedamos con el que tenga mas strength
+            @history_by_date[event.date_to_s] = (cards << selected_card)
+          else
+            @history_by_date[event.date_to_s] << [card_id, event.strength]
+          end
         end
       end
     end
@@ -208,14 +246,14 @@ class History < SimpleDelegator
     histo
   end
   
-  def inspect
-    str="\n"
-    @data.sort.each do |e|
-      str << "\t#{e[0]} => #{e[1].length}\n"
-      str << "\t    #{e[1].map(&:inspect).join("\n\t    ")} \n"
-    end
-    str
-  end
+  #  def inspect
+  #    str="\n"
+  #    @data.sort.each do |e|
+  #      str << "\t#{e[0]} => #{e[1].length}\n"
+  #      str << "\t    #{e[1].map(&:inspect).join("\n\t    ")} \n"
+  #    end
+  #    str
+  #  end
 end
 
 class Event
@@ -228,7 +266,7 @@ class Event
     @date.strftime("%Y-%m-%d")
   end
   
-  def inspect
-    "[" <<@date.strftime("%Y-%m-%d") << "]  q:#{@quality}    s:#{@strength}" #if @quality > 0
-  end
+  #  def inspect
+  #    "[" <<@date.strftime("%Y-%m-%d") << "]  q:#{@quality}    s:#{@strength}" #if @quality > 0
+  #  end
 end

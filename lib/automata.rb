@@ -1,10 +1,10 @@
 class Automata
-  attr_accessor :periodicity
+  @@periodicity = (0..60).to_a.map{|i| rand(13)+1}
   def initialize(engine)
     @engine = engine
     @accuracy = 1.0
-    @periodicity = 1.week
     @test = nil
+    @iteration = 0
   end
   
   def get_test(date)
@@ -18,8 +18,12 @@ class Automata
     end
     @test = nil
     @engine.answer_test answers, date
+    @iteration += 1
   end
   
+  def periodicity
+    @@periodicity[@iteration].days
+  end
   
   
 end

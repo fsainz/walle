@@ -15,7 +15,9 @@
     = "x5=#{@x5.to_json};"
     = "x6=#{@x6.to_json};"
 
+%h3{:style=>"color:#F00"} rojo
 %pre= simulator_stats(@simulator)
+%pre= @simulator.history.dates_of_review
 .week_report_wrapper
     #graph1.week_report
     #graph1_2.week_report.invert
@@ -25,9 +27,9 @@
 %hr
 %br
 
-
+%h3{:style=>"color:#446"} azul
 %pre= simulator_stats(@simulator2)
-
+%pre= @simulator2.history.dates_of_review
 .week_report_wrapper
     #graph2.week_report
     #graph2_2.week_report.invert

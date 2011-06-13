@@ -3,8 +3,8 @@ include Math
 class HomeController < ApplicationController
   
   def automata
-    @simulator = Simulator.new(:walle_one_random)
-    @simulator.simulate(10)
+    @simulator = Simulator.new(:walle_two)
+    @simulator.simulate(6.month)
     @histogram = [] 
     @ret_histogram = []
     @simulator.history.to_histogram.each do |e|
@@ -16,8 +16,9 @@ class HomeController < ApplicationController
     @histogram.flatten!
     @ret_histogram.flatten!
     
-    @simulator2 = Simulator.new(:walle_two)
-    @simulator2.simulate(10)
+    
+    @simulator2 = Simulator.new(:walle_three)
+    @simulator2.simulate(6.month)
     @histogram2 = [] 
     @ret_histogram2 = []
     @simulator2.history.to_histogram.each do |e|
@@ -32,8 +33,8 @@ class HomeController < ApplicationController
     @x1, @y1 = @simulator.history.plot_average_retention_in(365)
     @x2, @y2 = @simulator2.history.plot_average_retention_in(365)
     
-    @x3, @y3 = @simulator.history.plot_number_of_healthy_cards_in(120)
-    @x4, @y4 = @simulator2.history.plot_number_of_healthy_cards_in(120)
+    @x3, @y3 = @simulator.history.plot_number_of_healthy_cards_in(365)
+    @x4, @y4 = @simulator2.history.plot_number_of_healthy_cards_in(365)
     
     @x5 = @simulator.history.plot_retention_status
     @x6 = @simulator2.history.plot_retention_status
